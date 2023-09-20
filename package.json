@@ -1,13 +1,8 @@
 {
-  "name": "vite-electron-builder",
-  "description": "Secure boilerplate for Electron app based on Vite",
-  "version": "1.0.2",
-  "private": true,
-  "author": {
-    "email": "kozackunisoft@gmail.com",
-    "name": "Alex Kozack",
-    "url": "https://kozack.me"
-  },
+  "name": "image-compress",
+  "description": "Image compress app",
+  "version": "0.1.0",
+  "author": "erguotou525@gmail.com",
   "main": "packages/main/dist/index.cjs",
   "scripts": {
     "build": "npm run build:main && npm run build:preload && npm run build:renderer",
@@ -51,6 +46,8 @@
     "vue-tsc": "1.8.11"
   },
   "dependencies": {
-    "electron-updater": "6.1.4"
+    "electron-updater": "6.1.4",
+    "fast-glob": "^3.3.1",
+    "sharp": "^0.32.6"
   }
 }
