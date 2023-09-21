@@ -1,6 +1,5 @@
-import { resolve } from 'dns';
 import { stat } from 'node:fs/promises';
-import { parse } from 'path';
+import { parse, resolve } from 'path';
 import sharp from 'sharp';
 import type { CompressResult, CompressOptions } from '../../../types/shared';
 import { parentPort } from 'worker_threads';
@@ -11,19 +10,21 @@ async function compressPipeline(filePath: string, compressFunc: () => Promise<sh
     await compressFunc();
     const afterSize = (await stat(filePath)).size;
     return {
+      filePath,
       success: true,
       originSize: beforeSize,
       compressedSize: afterSize,
     };
   } catch(e) {
     return {
+      filePath,
       success: false,
       message: e instanceof Error ? e.message : `${e}`,
     };
   }
 }
 
-function compressFile(filePath: string, options?: CompressOptions): Promise<CompressResult[]> {
+function compressFile(filePath: string, options: CompressOptions, cb: (result: CompressResult) => void): Promise<CompressResult[]> {
   const file = parse(filePath);
   const ext = file.ext.toLowerCase();
   const input = sharp(filePath).rotate();
@@ -42,10 +43,13 @@ function compressFile(filePath: string, options?: CompressOptions): Promise<Comp
   } else if (ext.match(/svg$/)) {
     ret.push(compressPipeline(filePath, () => input.toFile(filePath)));
   }
+  ret.forEach(res => res.then(result => cb(result)));
   return Promise.all(ret);
 }
 
-parentPort?.on('message', async (value: { filePath: string, options?: CompressOptions }) => {
-  const ret = await compressFile(value.filePath, value.options);
-  parentPort?.postMessage(ret);
+parentPort?.on('message', async (value: { filePath: string, options: CompressOptions }) => {
+  await compressFile(value.filePath, value.options, (result) => {
+    parentPort?.postMessage(result);
+  });
+  parentPort?.postMessage('finished');
 });

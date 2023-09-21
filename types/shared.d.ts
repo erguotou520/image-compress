@@ -4,11 +4,11 @@ export type CompressOptions = {
   speed?: 'fast' | 'slow'
 }
 
-export type CompressResult = {
+export type CompressResult = { filePath: string } & ({
   success: true
   originSize: number
   compressedSize: number
 } | {
   success: false
   message: string
-}
+})

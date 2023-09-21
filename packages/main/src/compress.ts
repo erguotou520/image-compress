@@ -3,27 +3,13 @@ import { stat } from 'node:fs/promises';
 import glob from 'fast-glob';
 import { cpus } from 'os';
 import type { CompressOptions, CompressResult } from '../../../types/shared';
-import { Worker, workerData } from 'worker_threads';
+import { Worker } from 'worker_threads';
+import { ipcMain } from 'electron';
 
 const numCores = cpus().length; // CPU核心数
 const numThreadsPerCore = 2; // 每个核心的线程数
 
-// 创建多线程任务
-function createWorker(task) {
-  return new Promise((resolve, reject) => {
-    const worker = new Worker(__filename, { workerData: task });
-
-    worker.on('message', resolve);
-    worker.on('error', reject);
-    worker.on('exit', (code) => {
-      if (code !== 0)
-        reject(new Error(`Worker stopped with exit code ${code}`));
-    });
-  });
-}
-
-
-async function compressFiles(files: string[], options?: CompressOptions): Promise<CompressResult> {
+export async function compressFiles(files: string[], options: CompressOptions, cb: (result: CompressResult) => void, finished: () => void) {
   const tasks: string[] = [];
   for (const file of files) {
     if ((await stat(file)).isDirectory()) {
@@ -33,15 +19,16 @@ async function compressFiles(files: string[], options?: CompressOptions): Promis
       tasks.push(file);
     }
   }
-  // 创建任务列表
-  const finishList = Array.from({ length: tasks.length });
-  const finishCount = 0;
-  // 总任务池子数
-  const taskPool: Promise<CompressResult[]>[] = [];
-  function doTask(filePath: string): Promise<CompressResult[]> {
-    return new Promise<CompressResult[]>((_resolve, reject) => {
-      const worker = new Worker(resolve(__dirname, './compress-task'), { workerData: filePath});
-      worker.on('message', _resolve);
+  function doTask(filePath: string, cb: (result: CompressResult) => void): Promise<void> {
+    return new Promise<void>((_resolve, reject) => {
+      const worker = new Worker(resolve(__dirname, './compress-task'), { workerData: filePath });
+      worker.on('message', (e) => {
+        if (e === 'finished') {
+          resolve();
+        } else {
+          cb(e);
+        }
+      });
       worker.on('error', reject);
       worker.on('exit', (code) => {
         if (code !== 0)
@@ -49,17 +36,31 @@ async function compressFiles(files: string[], options?: CompressOptions): Promis
       });
     });
   }
-  while (taskPool.length < numCores * numThreadsPerCore) {
-    const taskFile = tasks.shift();
-    if (taskFile) {
-      const taskPromise = doTask(taskFile);
-      taskPromise.then(() => {
-
-      }).catch(()  => {
-        taskPool.splice(taskPool.indexOf(taskPromise), 1);
+  function addTask() {
+    if (tasks.length) {
+      const taskFile = tasks.shift()!;
+      const promise = doTask(taskFile, cb);
+      promise.then(() => {
+        addTask();
       });
-      taskPool.push();
+    } else {
+      throw new Error('finished');
     }
+  }
+  try {
+    for (let i = 0; i < numCores * numThreadsPerCore; i++) {
+      addTask();
+    }
+  } catch (e) {
+    finished();
   }
 }
 
+ipcMain.on('compress-files', async (event, files: string[], options: CompressOptions) => {
+  const results = await compressFiles(files, options, (result) => {
+    event.reply('compress-result', result);
+  }, () => {
+    event.reply('finished');
+  });
+  event.reply('compress-results', results);
+});
