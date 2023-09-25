@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import FileList from '/@/components/FileList.vue';
+import Settings from '/@/components/Settings.vue';
 </script>
 
 <template>
   <file-list />
+  <Settings />
 </template>
 
 <style>

@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer">
+  <footer class="flex items-center px-4 h-6">
     <div class="flex items-center">
       <input
         type="checkbox"
@@ -11,3 +11,7 @@
     </div>
   </footer>
 </template>
+<script setup lang="ts">
+</script>
+<style scoped>
+</style>
