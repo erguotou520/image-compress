@@ -5,7 +5,7 @@ import Settings from '/@/components/Settings.vue';
 
 <template>
   <file-list />
-  <Settings />
+  <settings />
 </template>
 
 <style>

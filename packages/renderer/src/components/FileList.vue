@@ -1,5 +1,9 @@
 <template>
-  <div class="flex flex-col flex-1">
+  <div
+    class="flex flex-col flex-1"
+    @drag.stop.prevent="onDrag"
+    @dragover.stop.prevent
+  >
     <table class="flex-shrink-0">
       <thead>
         <tr>
@@ -26,23 +30,19 @@
   </div>
 </template>
 <script setup lang="ts">
-document.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-});
+import {reactive} from 'vue';
+import type {CompressResult} from '../../../../types/shared';
+import {ipcRenderer} from 'electron';
 
-document.addEventListener('drop', (event) => {
-    event.preventDefault();
-    event.stopPropagation();
+const files = reactive<CompressResult[]>([]);
 
-    let pathArr = [];
-    for (const f of event.dataTransfer.files) {
-        // Using the path attribute to get absolute file path
-        console.log('File Path of dragged files: ', f.path);
-        pathArr.push(f.path); // assemble array for main.js
-    }
-    console.log(pathArr);
-    const ret = ipcRenderer.sendSync('dropped-file', pathArr);
-    console.log(ret);
-});
+function onDrag(event: DragEvent) {
+  let pathArr = [];
+  for (const f of event.dataTransfer?.files ?? []) {
+    pathArr.push(f.path); // assemble array for main.js
+  }
+  console.log(pathArr);
+  const ret = ipcRenderer.sendSync('dropped-file', pathArr);
+  console.log(ret);
+}
 </script>
