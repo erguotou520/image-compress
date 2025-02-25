@@ -2,7 +2,7 @@
   "name": "image-compress",
   "description": "图片压缩",
   "author": "erguotou525@gmail.com",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "repository": "https://github.com/erguotou520/image-compress",
   "type": "module",
   "scripts": {
