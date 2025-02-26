@@ -1,6 +1,7 @@
-import { FileImageOutlined } from '@ant-design/icons'
+import { SwapRightOutlined, FileImageOutlined } from '@ant-design/icons'
 
 import { EMPTY_VIEW_ID } from '@/constants'
+import Settings from './Settings'
 
 const EmptyView = () => {
   return (
@@ -10,6 +11,9 @@ const EmptyView = () => {
     >
       <FileImageOutlined className="text-72px" />
       <p className="text-lg">将图片/目录拖拽到此处开始压缩</p>
+      <div className="w-66 flex justify-end">
+        <Settings className="text-xs underline" icon={<SwapRightOutlined />} />
+      </div>
     </div>
   )
 }

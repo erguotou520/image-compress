@@ -19,10 +19,12 @@ export type CompressOptions = {
   formats: string[]
   quality?: number
   overwrite?: boolean
+  removeSVGViewBox?: boolean
 }
 
 export type GlobalSettings = {
   theme: Theme
   primaryColor: string
   defaultQuality: number
+  removeSVGViewBox: boolean
 }

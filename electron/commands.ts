@@ -20,6 +20,7 @@ interface CompressOptions {
   formats: string[]
   quality?: number
   overwrite?: boolean
+  removeSVGViewBox?: boolean
 }
 
 // 受支持的图片格式列表
@@ -159,7 +160,17 @@ ipcMain.handle('compress_image', async (_event, filePath: string, options: Compr
     } else if (format === 'svg') {
       const svgContent = await fs.readFile(filePath, 'utf8')
       const { data } = await optimize(svgContent, {
-        multipass: true
+        multipass: true,
+        plugins: [
+          {
+            name: 'preset-default',
+            params: {
+              overrides: {
+                removeViewBox: options.removeSVGViewBox === true ? undefined : false
+              }
+            }
+          }
+        ]
       })
       if (data.length < sourceSize) {
         await fs.writeFile(getOutputPath(filePath, format, options.overwrite ?? false, outputDir), data)

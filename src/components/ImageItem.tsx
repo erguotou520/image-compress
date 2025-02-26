@@ -13,7 +13,7 @@ import {
   SearchOutlined,
   UnlockOutlined
 } from '@ant-design/icons'
-import { Checkbox, ConfigProvider, InputNumber, Select } from 'antd'
+import { Checkbox, ConfigProvider, InputNumber, Select, Switch } from 'antd'
 import type { SelectProps } from 'antd'
 import { type CSSProperties, useEffect, useMemo, useState } from 'react'
 
@@ -29,6 +29,8 @@ const ImageItem = ({ file, onOptionsChange }: ImageItemProps) => {
   const [expanded, setExpanded] = useState(false)
 
   const ext = useMemo(() => getImageExtension(file), [file])
+  const originIsSvg = ext === 'svg'
+  const hasQualityOption = !originIsSvg
   // 是否显示尺寸调整
   const showSizeChange = useMemo(() => {
     return !!file.width && !['svg'].includes(ext)
@@ -56,7 +58,8 @@ const ImageItem = ({ file, onOptionsChange }: ImageItemProps) => {
       quality: settings.defaultQuality || 80,
       overwrite: true,
       width: undefined,
-      height: undefined
+      height: undefined,
+      removeSVGViewBox: settings.removeSVGViewBox
     }
   })
   const [keepAspectRatio, setKeepAspectRatio] = useState(true)
@@ -188,7 +191,7 @@ const ImageItem = ({ file, onOptionsChange }: ImageItemProps) => {
               style={miniStyle}
             />
           </div>
-          <div className="flex items-center px-4 flex-shrink-0">
+          {hasQualityOption && <div className="flex items-center px-4 flex-shrink-0">
             <span className="mr-2">压缩比</span>
             <InputNumber
               className="w-13 [&_.ant-input-number]:text-xs [&_.ant-input-number-suffix]:mr-1"
@@ -198,7 +201,18 @@ const ImageItem = ({ file, onOptionsChange }: ImageItemProps) => {
               suffix="%"
               style={miniStyle}
             />
-          </div>
+          </div>}
+          {originIsSvg && <div className="flex items-center px-4 flex-shrink-0">
+            <span className="mr-2">去除 viewBox</span>
+            <Switch
+              size="small"
+              checked={compressOptions.removeSVGViewBox}
+              onChange={value => {
+                changeOptions('removeSVGViewBox', value)
+              }}
+              style={miniStyle}
+            />
+          </div>}
           <div className="flex items-center ml-auto flex-shrink-0">
             <ConfigProvider theme={{ token: { colorPrimary: 'rgb(51,51,51)' } }}>
               <Checkbox
