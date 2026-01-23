@@ -35,7 +35,7 @@ export default defineConfig(async () => ({
         vite: {
           build: {
             rollupOptions: {
-              external: ['sharp']
+              external: ['sharp', 'ffmpeg-static', 'ffprobe-static']
             }
           }
         }
@@ -51,7 +51,7 @@ export default defineConfig(async () => ({
       renderer:
         process.env.NODE_ENV === 'test'
           ? // https://github.com/electron-vite/vite-plugin-electron-renderer/issues/78#issuecomment-2053600808
-            undefined
+          undefined
           : {}
     })
   ]

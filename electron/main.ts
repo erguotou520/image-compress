@@ -1,8 +1,14 @@
 import path from 'node:path'
 // import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
-import { BrowserWindow, app } from 'electron'
+import * as electronNS from 'electron'
 import './commands'
+
+// @ts-ignore - Electron ESM exports are via default
+const electron: typeof electronNS & { default: typeof electronNS } = electronNS as any
+const { BrowserWindow, app } = electron.default
+
+type BW = InstanceType<typeof BrowserWindow>
 
 // const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -25,7 +31,7 @@ export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
 
 process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
 
-let win: BrowserWindow | null
+let win: BW | null
 
 function createWindow() {
   // console.log('1', VITE_DEV_SERVER_URL)

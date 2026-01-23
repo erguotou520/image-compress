@@ -4,6 +4,9 @@ export const PRIMARY_COLOR_KEY = 'primaryColor'
 export const DEFAULT_QUALITY_KEY = 'defaultQuality'
 export const SVG_VIEW_BOX_KEY = 'svgViewBox'
 
+export const SUPPORTED_IMAGE_FORMATS = ['png', 'jpg', 'jpeg', 'svg', 'webp', 'gif']
+export const SUPPORTED_VIDEO_FORMATS = ['mp4', 'mkv', 'mov', 'avi', 'wmv', 'flv', 'webm']
+
 export const themes = [
   { value: 'light', label: '浅色' },
   { value: 'dark', label: '深色' },
@@ -11,10 +14,3 @@ export const themes = [
 ] as const
 
 export type Theme = (typeof themes)[number]['value']
-
-// export const imageFormats: SelectProps['options'] = [
-//   { value: 'jpg', label: 'JPEG' },
-//   { value: 'png', label: 'PNG' },
-//   { value: 'webp', label: 'WebP' },
-//   // { value: 'avif', label: 'AVIF' },
-// ]

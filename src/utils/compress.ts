@@ -1,6 +1,6 @@
-import type { CompressOptions, ImageInfo } from '@/types'
+import type { CompressOptions, MediaInfo } from '@/types'
 
-export function getImageExtension(file: ImageInfo) {
+export function getMediaExtension(file: MediaInfo) {
   let ext = file.fileExtension.toLowerCase()
   if (ext === 'jpg' || ext === 'jpeg') {
     ext = 'jpg'
@@ -9,11 +9,11 @@ export function getImageExtension(file: ImageInfo) {
 }
 
 export function mergeCompressOptions(
-  file: ImageInfo,
+  file: MediaInfo,
   defaultQuality: number | undefined,
   options: CompressOptions | undefined
 ) {
-  const ext = getImageExtension(file)
+  const ext = getMediaExtension(file)
   const defaultOptions = {
     formats: [ext],
     quality: defaultQuality || 80,

@@ -1,14 +1,16 @@
-import { ConfigProvider, theme as antdTheme } from 'antd'
+import { ConfigProvider, theme as antdTheme, Spin } from 'antd'
 
 import EmptyView from '@/components/EmptyView'
-import ImageList from '@/components/ImageList'
+import MediaList from '@/components/MediaList'
 import useSettings from '@/hooks/useSettings'
 import { useEffect, useState } from 'react'
 import Header from './components/Header'
+import { LoadingProvider, useLoading } from './context/LoadingContext'
 
-function App() {
+function AppContent() {
   const { settings } = useSettings()
   const [theme, setTheme] = useState(settings.theme)
+  const { isLoading, loadingTip } = useLoading()
 
   useEffect(() => {
     const handleSystemThemeChange = (e: MediaQueryListEvent) => {
@@ -40,20 +42,33 @@ function App() {
   }, [theme])
 
   return (
-    <div className="h-screen flex flex-col relative">
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: settings.primaryColor
-          },
-          algorithm: theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm
-        }}
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: settings.primaryColor
+        },
+        algorithm: theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm
+      }}
+    >
+      <Spin
+        spinning={isLoading}
+        tip={loadingTip}
       >
-        <Header />
-        <EmptyView />
-        <ImageList />
-      </ConfigProvider>
-    </div>
+        <div className="h-screen flex flex-col relative overflow-hidden bg-white dark:bg-dark-400">
+          <Header />
+          <EmptyView />
+          <MediaList />
+        </div>
+      </Spin>
+    </ConfigProvider>
+  )
+}
+
+function App() {
+  return (
+    <LoadingProvider>
+      <AppContent />
+    </LoadingProvider>
   )
 }
 
