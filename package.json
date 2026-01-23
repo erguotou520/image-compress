@@ -1,9 +1,9 @@
 {
-  "name": "image-compress",
+  "name": "media-compress",
   "description": "图片压缩",
   "author": "erguotou525@gmail.com",
-  "version": "0.1.6",
-  "repository": "https://github.com/erguotou520/image-compress",
+  "version": "0.2.0",
+  "repository": "https://github.com/erguotou520/media-compress",
   "type": "module",
   "scripts": {
     "dev": "vite",

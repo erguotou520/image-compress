@@ -16,8 +16,8 @@ export type VideoInfo = MediaInfo & { type: 'video' }
 
 export type CompressStatus = 'pending' | 'compressing' | 'success' | 'error'
 
-export type CompressImage = MediaInfo & { 
-  compressStatus: CompressStatus; 
+export type CompressImage = MediaInfo & {
+  compressStatus: CompressStatus;
   savedSize: number;
   progress?: number; // 0-100
 }
@@ -42,4 +42,5 @@ export type GlobalSettings = {
   primaryColor: string
   defaultQuality: number
   removeSVGViewBox: boolean
+  defaultVideoSetting: 'keep' | 'high'
 }

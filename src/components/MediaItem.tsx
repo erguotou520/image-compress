@@ -68,6 +68,7 @@ const MediaItem = ({ file, onOptionsChange, onRemove }: MediaItemProps) => {
 
   const [compressOptions, setCompressOptions] = useState<CompressOptions>(() => {
     const isVideo = file.type === 'video'
+    const defaultVideoSetting = settings.defaultVideoSetting || 'high'
     return {
       formats: [ext],
       quality: settings.defaultQuality || 80,
@@ -75,7 +76,7 @@ const MediaItem = ({ file, onOptionsChange, onRemove }: MediaItemProps) => {
       width: undefined,
       height: undefined,
       removeSVGViewBox: settings.removeSVGViewBox,
-      keepOriginal: true,
+      keepOriginal: isVideo ? defaultVideoSetting === 'keep' : true,
       // Video defaults
       videoCodec: isVideo ? 'libx264' : undefined,
       crf: isVideo ? 18 : undefined,
