@@ -7,7 +7,7 @@ import useSettings from '../hooks/useSettings'
 
 const Settings = ({ className, icon }: { className?: string, icon?: React.ReactNode }) => {
   const [visible, setVisible] = useState(false)
-  const { settings, changeTheme, changePrimaryColor, changeDefaultQuality, changeSvgViewBox, changeDefaultVideoSetting } = useSettings()
+  const { settings, changeTheme, changePrimaryColor, changeDefaultQuality, changeSvgViewBox, changeDefaultVideoSetting, changeVideoCrf } = useSettings()
 
   return (
     <>
@@ -15,7 +15,7 @@ const Settings = ({ className, icon }: { className?: string, icon?: React.ReactN
         {icon || <SettingOutlined />}
         <span className="ml-1">系统设置</span>
       </div>
-      <Modal title="系统设置" open={visible} width={400} onCancel={() => setVisible(false)} footer={null}>
+      <Modal title="系统设置" open={visible} width={450} onCancel={() => setVisible(false)} footer={null}>
         <Form<GlobalSettings>
           layout="horizontal"
           initialValues={settings}
@@ -74,7 +74,7 @@ const Settings = ({ className, icon }: { className?: string, icon?: React.ReactN
           </Form.Item>
 
           <div className="text-gray-400 text-xs mb-2 mt-4">视频设置</div>
-          <Form.Item name="defaultVideoSetting" label="默认压缩设置">
+          <Form.Item className='!mb-2' name="defaultVideoSetting" label="默认压缩设置">
             <Radio.Group
               size="small"
               onChange={e => {
@@ -82,9 +82,21 @@ const Settings = ({ className, icon }: { className?: string, icon?: React.ReactN
               }}
             >
               <Radio value="keep">保持原样</Radio>
-              <Radio value="high">高质量压缩 (crf=18)</Radio>
+              <Radio value="high">高质量压缩</Radio>
             </Radio.Group>
           </Form.Item>
+          {settings.defaultVideoSetting === 'high' && (
+            <Form.Item name="videoCrf" label="CRF" tooltip="越小画质越好，越大文件越小">
+              <InputNumber
+                size="small"
+                min={1}
+                max={25}
+                onChange={value => {
+                  if (value) changeVideoCrf(value)
+                }}
+              />
+            </Form.Item>
+          )}
         </Form>
       </Modal>
     </>

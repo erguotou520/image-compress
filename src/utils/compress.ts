@@ -1,4 +1,4 @@
-import type { CompressOptions, MediaInfo } from '@/types'
+import type { CompressOptions, GlobalSettings, MediaInfo } from '@/types'
 
 export function getMediaExtension(file: MediaInfo) {
   let ext = file.fileExtension.toLowerCase()
@@ -10,16 +10,22 @@ export function getMediaExtension(file: MediaInfo) {
 
 export function mergeCompressOptions(
   file: MediaInfo,
-  defaultQuality: number | undefined,
+  settings: GlobalSettings,
   options: CompressOptions | undefined
 ) {
   const ext = getMediaExtension(file)
-  const defaultOptions = {
+  const isVideo = file.type === 'video'
+  const defaultOptions: CompressOptions = {
     formats: [ext],
-    quality: defaultQuality || 80,
-    overwrite: true,
+    quality: settings.defaultQuality || 80,
+    overwrite: isVideo ? false : true,
     width: undefined,
-    height: undefined
+    height: undefined,
+    removeSVGViewBox: settings.removeSVGViewBox,
+    keepOriginal: isVideo ? settings.defaultVideoSetting === 'keep' : true,
+    videoCodec: isVideo ? 'libx264' : undefined,
+    crf: isVideo ? settings.videoCrf : undefined,
+    preset: isVideo ? 'medium' : undefined
   }
   if (options) {
     return {

@@ -26,7 +26,7 @@ const MediaList = () => {
   const compressOptionsMap = useRef<Map<string, CompressOptions>>(new Map())
 
   const compressMedia = (file: MediaInfo) => {
-    const options = mergeCompressOptions(file, settings.defaultQuality, compressOptionsMap.current.get(file.filePath))
+    const options = mergeCompressOptions(file, settings, compressOptionsMap.current.get(file.filePath))
     if (options.width === file.width && options.height === file.height) {
       options.width = undefined
       options.height = undefined

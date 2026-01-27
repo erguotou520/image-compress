@@ -43,4 +43,5 @@ export type GlobalSettings = {
   defaultQuality: number
   removeSVGViewBox: boolean
   defaultVideoSetting: 'keep' | 'high'
+  videoCrf: number
 }

@@ -79,7 +79,7 @@ const MediaItem = ({ file, onOptionsChange, onRemove }: MediaItemProps) => {
       keepOriginal: isVideo ? defaultVideoSetting === 'keep' : true,
       // Video defaults
       videoCodec: isVideo ? 'libx264' : undefined,
-      crf: isVideo ? 18 : undefined,
+      crf: isVideo ? settings.videoCrf : undefined,
       preset: isVideo ? 'medium' : undefined
     }
   })

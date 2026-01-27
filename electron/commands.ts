@@ -14,6 +14,18 @@ import type { MediaInfo, CompressOptions } from '../src/types'
 const electron: typeof electronNS & { default: typeof electronNS } = electronNS as any
 const { dialog, ipcMain, shell, BrowserWindow } = electron.default
 
+// 获取非 ASAR 路径（用于执行二进制文件）
+function getBinaryPath(pathToBinary: string | null) {
+  if (!pathToBinary) return null
+  if (electron.default.app.isPackaged) {
+    return pathToBinary.replace('app.asar', 'app.asar.unpacked')
+  }
+  return pathToBinary
+}
+
+const FFMPEG_PATH = getBinaryPath(ffmpegPath)
+const FFPROBE_PATH = getBinaryPath(ffprobePath?.path || null)
+
 
 
 // 获取媒体信息
@@ -62,7 +74,7 @@ async function getMediaInfoFromPath(filePath: string): Promise<MediaInfo | null>
 
 async function getVideoMetadata(filePath: string): Promise<{ width: number, height: number, duration: number }> {
   return new Promise((resolve, reject) => {
-    const ffprobe = spawn(ffprobePath.path, [
+    const ffprobe = spawn(FFPROBE_PATH!, [
       '-v', 'error',
       '-show_entries', 'stream=width,height,duration',
       '-of', 'json',
@@ -237,8 +249,8 @@ async function handleVideoCompression(event: electronNS.IpcMainInvokeEvent, file
       const tempPath = outputPath + '.tmp'
       const args = getVideoArgs(filePath, tempPath, outputFormat, options)
 
-      console.log(ffmpegPath, ...args)
-      const ffmpeg = spawn(ffmpegPath!, args)
+      console.log(FFMPEG_PATH, ...args)
+      const ffmpeg = spawn(FFMPEG_PATH!, args)
       const sender = BrowserWindow.fromWebContents(event.sender)
 
       let duration = 0

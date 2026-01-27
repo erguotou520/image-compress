@@ -1,4 +1,4 @@
-import { DEFAULT_QUALITY_KEY, PRIMARY_COLOR_KEY, SVG_VIEW_BOX_KEY, THEME_KEY, DEFAULT_VIDEO_SETTING_KEY, type Theme } from '@/constants'
+import { DEFAULT_QUALITY_KEY, PRIMARY_COLOR_KEY, SVG_VIEW_BOX_KEY, THEME_KEY, DEFAULT_VIDEO_SETTING_KEY, VIDEO_CRF_KEY, type Theme } from '@/constants'
 import type { GlobalSettings } from '@/types'
 import { create } from 'zustand'
 
@@ -10,6 +10,7 @@ interface SettingsStore {
   changeSettings: (settings: GlobalSettings) => void
   changeSvgViewBox: (viewbox: boolean) => void
   changeDefaultVideoSetting: (setting: 'keep' | 'high') => void
+  changeVideoCrf: (crf: number) => void
 }
 
 const useSettings = create<SettingsStore>((set, get) => ({
@@ -18,7 +19,8 @@ const useSettings = create<SettingsStore>((set, get) => ({
     primaryColor: localStorage.getItem(PRIMARY_COLOR_KEY) || '#1677ff',
     defaultQuality: Number(localStorage.getItem(DEFAULT_QUALITY_KEY) || 80),
     removeSVGViewBox: localStorage.getItem(SVG_VIEW_BOX_KEY) === 'true',
-    defaultVideoSetting: (localStorage.getItem(DEFAULT_VIDEO_SETTING_KEY) as 'keep' | 'high') || 'high'
+    defaultVideoSetting: (localStorage.getItem(DEFAULT_VIDEO_SETTING_KEY) as 'keep' | 'high') || 'high',
+    videoCrf: Number(localStorage.getItem(VIDEO_CRF_KEY) || 18)
   },
 
   changeTheme: theme => {
@@ -46,6 +48,11 @@ const useSettings = create<SettingsStore>((set, get) => ({
     localStorage.setItem(DEFAULT_VIDEO_SETTING_KEY, setting)
   },
 
+  changeVideoCrf: crf => {
+    set({ settings: { ...get().settings, videoCrf: crf } })
+    localStorage.setItem(VIDEO_CRF_KEY, String(crf))
+  },
+
   changeSettings: settings => {
     set({ settings })
     localStorage.setItem(THEME_KEY, settings.theme)
@@ -53,6 +60,7 @@ const useSettings = create<SettingsStore>((set, get) => ({
     localStorage.setItem(DEFAULT_QUALITY_KEY, String(settings.defaultQuality))
     localStorage.setItem(SVG_VIEW_BOX_KEY, settings.removeSVGViewBox ? 'true' : 'false')
     localStorage.setItem(DEFAULT_VIDEO_SETTING_KEY, settings.defaultVideoSetting)
+    localStorage.setItem(VIDEO_CRF_KEY, String(settings.videoCrf))
   }
 }))
 
