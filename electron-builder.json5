@@ -10,7 +10,7 @@
     "**/node_modules/ffprobe-static/**"
   ],
   // "artifactName": "${productName}_${version}_${arch}.${ext}",
-  // "productName": "图片压缩",
+  // "productName": "多媒体压缩",
   "compression": "maximum",
   "directories": {
     "output": "release/${version}"

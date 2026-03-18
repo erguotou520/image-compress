@@ -12,7 +12,7 @@ const Header = ({ title }: HeaderProps) => {
         WebkitAppRegion: 'drag'
       }}
     >
-      <span className="text-sm text-main">{title || '图片压缩'}</span>
+      <span className="text-sm text-main">{title || '多媒体压缩'}</span>
     </div>
   )
 }
