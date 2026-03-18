@@ -2,7 +2,7 @@
   "name": "media-compress",
   "description": "图片压缩",
   "author": "erguotou525@gmail.com",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "repository": "https://github.com/erguotou520/media-compress",
   "type": "module",
   "scripts": {
